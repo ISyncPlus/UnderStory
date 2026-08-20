@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <style>
+    :root {
+      --bg: #f4f2ea;
+      --border: #d5d2c7;
+      --ink: #17212d;
+      --jumper: #c83b1e;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #15243c;
+        --border: #253956;
+        --ink: #edf2f7;
+        --jumper: #ff5e3a;
+      }
+    }
+  </style>
+  <rect width="32" height="32" rx="7" fill="var(--bg)"/>
+  <rect x="0.5" y="0.5" width="31" height="31" rx="6.5" fill="none" stroke="var(--border)" stroke-width="1"/>
+  
+  <!-- Orthogonal jumper run -->
+  <path d="M 7 9 v 6 h 9 v 7 h 9" fill="none" stroke="var(--ink)" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter"/>
+  
+  <!-- Terminal block 1: solid ink application node -->
+  <rect x="4" y="6" width="6" height="6" fill="var(--ink)"/>
+  
+  <!-- Terminal block 2: hollow intermediate distribution block -->
+  <rect x="13" y="12" width="6" height="6" fill="var(--bg)" stroke="var(--ink)" stroke-width="2"/>
+  
+  <!-- Terminal block 3: jumper vermilion fault node -->
+  <rect x="22" y="19" width="6" height="6" fill="var(--jumper)"/>
+</svg>

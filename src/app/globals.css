@@ -1,0 +1,399 @@
+@import "tailwindcss";
+
+/* ───────────────────────────────────────────────────────────────────────────
+   Understory — the record sheet
+
+   The world is a telephone-exchange cable record: pale drafting stock, ink
+   hairlines, orthogonal runs, terminal blocks, stencilled labels, and a title
+   block on every sheet. One saturated colour — jumper vermilion — is reserved
+   entirely for the traced route, so the only thing shouting on any screen is
+   the answer to the question that was asked.
+
+   Dark mode is not an inversion. It is the negative print: white linework on
+   Prussian blue, the way a drawing comes back from the reprographer.
+
+   Elevation is declared once, by rule weight. There are no surface shadows in
+   this system; the single exception is the floating search panel, which needs
+   real separation from the sheet beneath it.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+@custom-variant negative (&:where([data-theme="negative"], [data-theme="negative"] *));
+
+@theme {
+  /* Ground and sheet */
+  --color-stock: oklch(0.957 0.011 116);
+  --color-stock-sunk: oklch(0.934 0.013 114);
+  --color-sheet: oklch(0.988 0.005 116);
+  --color-sheet-raised: oklch(1 0 0);
+
+  /* Ink */
+  --color-ink: oklch(0.243 0.021 249);
+  --color-ink-2: oklch(0.418 0.020 249);
+  --color-ink-3: oklch(0.502 0.019 249);
+
+  /* Rules — the only elevation this system has */
+  --color-rule: oklch(0.828 0.014 245);
+  --color-rule-strong: oklch(0.615 0.020 245);
+  --color-rule-hair: oklch(0.872 0.011 245);
+
+  /* The jumper: the traced route, and nothing else */
+  --color-jumper: oklch(0.532 0.194 30);
+  --color-jumper-bright: oklch(0.583 0.202 31);
+  --color-jumper-wash: oklch(0.947 0.041 34);
+  /* Text laid on the jumper. Flips with the print, because the jumper does. */
+  --color-on-jumper: oklch(0.990 0.005 60);
+
+  /* Fault classes. Each also carries a stencil letter and a distinct mark, so
+     the class never depends on colour alone. */
+  --color-fault-critical: oklch(0.468 0.190 24);
+  --color-fault-high: oklch(0.516 0.148 52);
+  --color-fault-medium: oklch(0.502 0.101 88);
+  --color-fault-low: oklch(0.486 0.065 236);
+  --color-clear: oklch(0.455 0.088 162);
+  --color-clear-wash: oklch(0.945 0.031 162);
+
+  /* Type */
+  --font-sans: 'Public Sans Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-stencil: 'Barlow Condensed', 'Public Sans Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono Variable', ui-monospace, 'SF Mono', 'Cascadia Code', monospace;
+
+  --text-stencil: 0.6875rem;
+  --text-stencil--line-height: 1.35;
+  --text-stencil--letter-spacing: 0.11em;
+  --text-datum: 0.8125rem;
+  --text-datum--line-height: 1.35;
+  --text-row: 0.875rem;
+  --text-row--line-height: 1.45;
+  --text-prose: 1rem;
+  --text-prose--line-height: 1.65;
+
+  /* Radii: structure is square, controls are barely softened. */
+  --radius-none: 0;
+  --radius-control: 2px;
+  --radius-block: 3px;
+
+  --ease-run: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* The negative print. Composed, not inverted: the blue ground carries its own
+   chroma, the linework gains weight, and secondary text is tinted from the
+   ground's hue rather than dropped to grey. */
+[data-theme='negative'] {
+  --color-stock: oklch(0.252 0.043 252);
+  --color-stock-sunk: oklch(0.222 0.041 252);
+  --color-sheet: oklch(0.296 0.041 252);
+  --color-sheet-raised: oklch(0.330 0.043 252);
+
+  --color-ink: oklch(0.968 0.010 250);
+  --color-ink-2: oklch(0.838 0.019 250);
+  --color-ink-3: oklch(0.735 0.024 250);
+
+  --color-rule: oklch(0.470 0.038 250);
+  --color-rule-strong: oklch(0.575 0.043 250);
+  --color-rule-hair: oklch(0.400 0.035 250);
+
+  --color-jumper: oklch(0.712 0.171 39);
+  --color-jumper-bright: oklch(0.775 0.163 45);
+  --color-jumper-wash: oklch(0.318 0.070 34);
+  --color-on-jumper: oklch(0.205 0.040 40);
+
+  --color-fault-critical: oklch(0.700 0.184 24);
+  --color-fault-high: oklch(0.760 0.140 62);
+  --color-fault-medium: oklch(0.810 0.118 92);
+  --color-fault-low: oklch(0.775 0.070 232);
+  --color-clear: oklch(0.780 0.106 164);
+  --color-clear-wash: oklch(0.330 0.052 164);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-rule);
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    scrollbar-color: var(--color-rule-strong) var(--color-stock-sunk);
+  }
+
+  body {
+    background-color: var(--color-stock);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: var(--text-prose);
+    line-height: 1.6;
+    font-variant-numeric: tabular-nums;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* The surfaces nobody draws. Leaving these at the browser default is the
+     clearest sign a page was assembled rather than built. */
+  ::selection {
+    background-color: var(--color-jumper-wash);
+    color: var(--color-ink);
+  }
+
+  :root {
+    caret-color: var(--color-jumper);
+    accent-color: var(--color-jumper);
+  }
+
+  ::-webkit-scrollbar {
+    width: 11px;
+    height: 11px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--color-stock-sunk);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-rule-strong);
+    border: 3px solid var(--color-stock-sunk);
+    border-radius: 0;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-ink-3);
+  }
+  ::-webkit-scrollbar-corner {
+    background: var(--color-stock-sunk);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-jumper);
+    outline-offset: 2px;
+    border-radius: 1px;
+  }
+
+  a {
+    color: inherit;
+    text-decoration-color: color-mix(in oklch, currentColor 38%, transparent);
+    text-underline-offset: 0.22em;
+    text-decoration-thickness: from-font;
+  }
+
+  a:hover {
+    text-decoration-color: var(--color-jumper);
+  }
+
+  h1, h2, h3, h4 {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  input, select, textarea, button {
+    font: inherit;
+    color: inherit;
+  }
+
+  [hidden] {
+    display: none !important;
+  }
+}
+
+@layer components {
+  /* ── Stencilled label: the drawing's own voice for anything that names a
+     field rather than carrying content. ─────────────────────────────────── */
+  .stencil {
+    font-family: var(--font-stencil);
+    font-size: var(--text-stencil);
+    font-weight: 600;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    line-height: 1.35;
+    color: var(--color-ink-3);
+  }
+
+  .stencil-strong {
+    font-family: var(--font-stencil);
+    font-size: var(--text-stencil);
+    font-weight: 700;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    line-height: 1.35;
+    color: var(--color-ink);
+  }
+
+  /* ── Sheet: the drawing itself. Elevation by rule, never by shadow. ────── */
+  .sheet {
+    background-color: var(--color-sheet);
+    border: 1px solid var(--color-rule);
+  }
+
+  .datum {
+    font-family: var(--font-mono);
+    font-size: var(--text-datum);
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'zero' 1;
+  }
+
+  /* ── The run: an orthogonal jumper drawn down the left of a route. ─────── */
+  .run-rail {
+    background: linear-gradient(
+      to bottom,
+      var(--color-rule-strong) 0,
+      var(--color-rule-strong) 100%
+    );
+    transform-origin: top;
+  }
+
+  /* One authored moment: the jumper runs itself down the sheet.
+     Nothing else animates in, and nothing is hidden waiting for an animation
+     to reveal it — every block is present and legible from the first frame,
+     which is also what keeps a mid-animation screenshot honest. */
+  @media (prefers-reduced-motion: no-preference) {
+    .run-rail {
+      animation: run-draw 640ms var(--ease-run) both;
+    }
+    .run-block {
+      animation: run-land 420ms var(--ease-run) both;
+      animation-delay: calc(90ms + var(--hop, 0) * 80ms);
+    }
+    .sheet-enter {
+      animation: sheet-land 460ms var(--ease-run) both;
+    }
+  }
+
+  @keyframes run-draw {
+    from {
+      transform: scaleY(0);
+    }
+    to {
+      transform: scaleY(1);
+    }
+  }
+
+  @keyframes run-land {
+    from {
+      transform: translateX(-9px);
+    }
+    to {
+      transform: none;
+    }
+  }
+
+  @keyframes sheet-land {
+    from {
+      transform: translateY(7px);
+    }
+    to {
+      transform: none;
+    }
+  }
+
+  /* ── Skeleton loading pulse ────────────────────────────────────────────── */
+  @keyframes skeleton-pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.32;
+    }
+  }
+
+  .skeleton {
+    background-color: var(--color-stock-sunk);
+    animation: skeleton-pulse 1.6s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  /* ── Ruled tabulation. Rows are separated by hairlines, never by cards. ── */
+  .ruled > * + * {
+    border-top: 1px solid var(--color-rule-hair);
+  }
+
+  .row-hit {
+    transition: background-color 120ms ease-out;
+  }
+  .row-hit:hover {
+    background-color: var(--color-stock-sunk);
+  }
+
+  /* ── Controls ──────────────────────────────────────────────────────────── */
+  .control {
+    font-family: var(--font-stencil);
+    font-size: var(--text-stencil);
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border: 1px solid var(--color-rule-strong);
+    border-radius: var(--radius-control);
+    background-color: transparent;
+    color: var(--color-ink);
+    padding: 0.5rem 0.75rem;
+    min-height: 2.25rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition:
+      background-color 120ms ease-out,
+      border-color 120ms ease-out,
+      color 120ms ease-out;
+    cursor: pointer;
+  }
+
+  .control:hover:not(:disabled) {
+    border-color: var(--color-jumper);
+    color: var(--color-jumper);
+  }
+
+  .control:disabled {
+    color: var(--color-ink-3);
+    border-color: var(--color-rule);
+    cursor: not-allowed;
+  }
+
+  .control-filled {
+    background-color: var(--color-jumper);
+    border-color: var(--color-jumper);
+    color: var(--color-on-jumper);
+  }
+
+  .control-filled:hover:not(:disabled) {
+    background-color: var(--color-jumper-bright);
+    border-color: var(--color-jumper-bright);
+    color: var(--color-on-jumper);
+  }
+
+  .control-on {
+    background-color: var(--color-ink);
+    border-color: var(--color-ink);
+    color: var(--color-sheet);
+  }
+  .control-on:hover:not(:disabled) {
+    background-color: var(--color-ink);
+    border-color: var(--color-ink);
+    color: var(--color-sheet);
+  }
+
+  .field {
+    font-family: var(--font-mono);
+    font-size: var(--text-datum);
+    background-color: var(--color-sheet);
+    border: 1px solid var(--color-rule-strong);
+    border-radius: var(--radius-control);
+    padding: 0.5rem 0.7rem;
+    min-height: 2.25rem;
+    color: var(--color-ink);
+    width: 100%;
+  }
+
+  .field::placeholder {
+    color: var(--color-ink-3);
+  }
+
+  .field:focus {
+    border-color: var(--color-jumper);
+  }
+}
+
+/* Print: the sheet was always meant to leave the screen. */
+@media print {
+  body {
+    background: #fff;
+    color: #000;
+  }
+  .no-print {
+    display: none !important;
+  }
+}

@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Nothing here needs a database. The dataset is built and validated in memory,
+# every Cypher statement is parsed against Neo4j's own grammar rather than
+# executed, and the production build never contacts an instance — which is why
+# CI can be green without holding a single secret.
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Parse every Cypher statement
+        run: npm run cypher:check
+
+      - name: Build and validate the dataset
+        run: npm run data:verify
+
+      - name: Confirm the query documentation is current
+        run: |
+          npm run docs:queries
+          git diff --exit-code -- docs/QUERIES.md \
+            || (echo "::error::docs/QUERIES.md is out of date. Run 'npm run docs:queries' and commit the result." && exit 1)
+
+      - name: Production build
+        run: npm run build

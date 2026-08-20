@@ -1,0 +1,10 @@
+node_modules
+.next
+.git
+.review
+.agents
+.impeccable
+docs/screenshots
+*.md
+.env*
+!.env.example

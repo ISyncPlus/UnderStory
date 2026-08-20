@@ -1,0 +1,35 @@
+# dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# next
+.next/
+out/
+build/
+next-env.d.ts
+
+# secrets — never commit connection details
+.env
+.env.local
+.env.*.local
+
+# test + tooling output
+coverage/
+.playwright/
+*.tsbuildinfo
+.vercel
+
+# os
+.DS_Store
+Thumbs.db
+
+# tools and working files
+tools/
+.agents/
+.claude/
+.impeccable/
+skills-lock.json
+
+# capture output (docs/screenshots is committed; .review is not)
+.review/
