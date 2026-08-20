@@ -9,7 +9,7 @@ applications can reach this advisory, by what route, and what is the cheapest
 place to break the chain?*
 
 > **Live demo:** [under-story-pi.vercel.app](https://under-story-pi.vercel.app/)
-> **Walkthrough video:** [Streamable (3 min take)](https://streamable.com/92n8iv)
+> **Walkthrough video:** [Streamable (3 min take)](https://streamable.com/hcy1mq)
 > **Author:** Ebube Ezediimbu · [@ISyncPlus](https://github.com/ISyncPlus)
 
 ---
