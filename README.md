@@ -8,8 +8,8 @@ and answers reachability questions a table cannot answer well: *which of our
 applications can reach this advisory, by what route, and what is the cheapest
 place to break the chain?*
 
-> **Live demo:** `{{DEMO_URL}}`
-> **Walkthrough video:** `{{VIDEO_URL}}`
+> **Live demo:** [under-story.vercel.app](https://under-story-7qmdhsdcn-isyncplus-projects.vercel.app)
+> **Walkthrough video:** [Streamable (3 min take)](https://streamable.com/92n8iv)
 > **Author:** Ebube Ezediimbu · [@ISyncPlus](https://github.com/ISyncPlus)
 
 ---
