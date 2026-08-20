@@ -18,8 +18,14 @@ const nextConfig: NextConfig = {
   serverExternalPackages: ['neo4j-driver'],
   reactStrictMode: true,
   poweredByHeader: false,
-  eslint: { ignoreDuringBuilds: true },
   typescript: { ignoreBuildErrors: false },
+  turbopack: useFixtures
+    ? {
+        resolveAlias: {
+          '@/lib/neo4j': './src/lib/neo4j.fixture.ts',
+        },
+      }
+    : {},
   webpack: (config, { webpack }) => {
     if (useFixtures) {
       // Rewrite the request rather than aliasing it: Next resolves `@/…`
