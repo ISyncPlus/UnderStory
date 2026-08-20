@@ -497,26 +497,11 @@ whole application in thirty seconds.
 
 ---
 
-## What is left as a placeholder
-
-Search this repo for `{{` to find every one:
-
-| Placeholder | Where | What to do |
-|---|---|---|
-| `{{YOUR_NAME}}`, `{{GITHUB_USERNAME}}` | README, `LICENSE`, `package.json` | Your name and handle |
-| `{{REPO_URL}}` | README | The GitHub URL after you push |
-| `{{DEMO_URL}}` | README, `docs/DEPLOY.md` | The Vercel URL after you deploy |
-| `{{VIDEO_URL}}` | README | The walkthrough recording |
-| `NEO4J_URI`, `NEO4J_PASSWORD` | `.env.local` (not committed) | From the CognoDB console — [docs/SETUP-COGNODB.md](docs/SETUP-COGNODB.md) |
-
----
-
 ## Documentation
 
 - **[docs/SETUP-COGNODB.md](docs/SETUP-COGNODB.md)** — create the instance and load the graph, step by step
 - **[docs/QUERIES.md](docs/QUERIES.md)** — every query, what it answers, and why the graph earns it
 - **[docs/DEPLOY.md](docs/DEPLOY.md)** — deploy the hosted demo on Vercel
-- **[docs/DEMO-SCRIPT.md](docs/DEMO-SCRIPT.md)** — a shot-by-shot script for the walkthrough video
 - **[DESIGN.md](DESIGN.md)** — the visual system, recorded from the built interface
 - **[PRODUCT.md](PRODUCT.md)** — product truth: who this is for and what it must never fake
 

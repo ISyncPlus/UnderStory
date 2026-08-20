@@ -16,7 +16,7 @@ git init
 git add .
 git commit -m "Understory: dependency reach over a graph database"
 git branch -M main
-git remote add origin {{REPO_URL}}
+git remote add origin https://github.com/ISyncPlus/UnderStory.git
 git push -u origin main
 ```
 
