@@ -24,12 +24,8 @@ coverage/
 .DS_Store
 Thumbs.db
 
-# tools and working files
+# local tools
 tools/
-.agents/
-.claude/
-.impeccable/
-skills-lock.json
 
 # capture output (docs/screenshots is committed; .review is not)
 .review/
