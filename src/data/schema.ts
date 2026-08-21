@@ -16,7 +16,7 @@ export const INDEXES: readonly string[] = [
   'CREATE INDEX license_category IF NOT EXISTS FOR (l:License) ON (l.category)',
 ];
 
-/** Write statements. */
+// Parameterized Cypher write statements for graph seeding
 export const WRITES = {
   applications: `
     UNWIND $rows AS row

@@ -5,7 +5,7 @@ import { LineLamp } from './line-lamp';
 import { Lookup } from './lookup';
 import { PrintToggle } from './print-toggle';
 
-/** The masthead. */
+/** Top navigation masthead with title, links, search lookup, status indicator, and theme switcher. */
 export function Masthead() {
   return (
     <header className="no-print sticky top-0 z-40 border-b border-rule-strong bg-stock">
@@ -35,7 +35,7 @@ export function Masthead() {
   );
 }
 
-/** The mark: three terminal blocks and the run between them. */
+/** Brand logo mark. */
 function Mark() {
   return (
     <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true" className="shrink-0">
@@ -49,7 +49,7 @@ function Mark() {
   );
 }
 
-/** The title block. */
+/** Sheet title block with document title and metadata badges. */
 export function TitleBlock({
   sheet,
   scale,

@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 
 import { Icon, type IconName } from './icon';
 
-/** The sheet. */
+/** Base container component representing a bordered layout sheet. */
 export function Sheet({
   children,
   className = '',
@@ -20,7 +20,7 @@ export function Sheet({
   return <section className={`border ${tones[tone]} ${className}`}>{children}</section>;
 }
 
-/** A sheet field header. */
+/** Header component for sheets with title, icon, and optional actions. */
 export function SheetHead({
   label,
   icon,
@@ -44,7 +44,7 @@ export function SheetHead({
   );
 }
 
-/** Rows separated by hairlines rather than wrapped in cards. */
+/** Container for rows separated by hairlines. */
 export function Ruled({ children, className = '' }: { children: ReactNode; className?: string }) {
   return <div className={`ruled ${className}`}>{children}</div>;
 }
@@ -58,7 +58,7 @@ const FAULT_INK = {
   low: 'var(--color-fault-low)',
 } as const;
 
-/** The fault stencil. */
+/** Visual indicator mark for vulnerability severity levels. */
 export function FaultMark({
   severity,
   size = 'normal',

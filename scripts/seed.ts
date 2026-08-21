@@ -1,3 +1,7 @@
+/**
+ * Loads and seeds the dependency dataset into CognoDB.
+ * Supports --dry-run for validation and --reset to wipe existing graph data before import.
+ */
 import neo4j, { type Driver, type Session } from 'neo4j-driver';
 
 import { buildGraph } from '../src/data/build-graph';
@@ -13,6 +17,7 @@ import { loadEnv } from './load-env';
 
 loadEnv();
 
+// Batch size to prevent memory pressure during large write transactions
 const BATCH_SIZE = 400;
 
 const styles = {
@@ -36,12 +41,14 @@ function fail(message: string, hint?: string): never {
   process.exit(1);
 }
 
+// Helper to chunk arrays for batched processing
 function chunk<T>(items: readonly T[], size: number): T[][] {
   const out: T[][] = [];
   for (let i = 0; i < items.length; i += size) out.push(items.slice(i, i + size));
   return out;
 }
 
+// Executes Cypher write statements in batches with progress logging
 async function runBatched(
   session: Session,
   label: string,
@@ -64,6 +71,7 @@ async function runBatched(
   process.stdout.write(`\r  ${label.padEnd(26)} ${styles.green}${rows.length}${styles.reset}          \n`);
 }
 
+// Deletes all nodes and relationships in iterative batches
 async function resetGraph(session: Session): Promise<void> {
   log(`\n${styles.yellow}Deleting the existing graph…${styles.reset}`);
   let total = 0;
@@ -77,6 +85,7 @@ async function resetGraph(session: Session): Promise<void> {
   process.stdout.write(`\r  ${styles.green}deleted ${total} nodes${styles.reset}          \n`);
 }
 
+// Creates database constraints and indexes defined in schema
 async function applySchema(session: Session): Promise<void> {
   log(`\n${styles.bold}Schema${styles.reset}`);
   for (const statement of [...CONSTRAINTS, ...INDEXES]) {

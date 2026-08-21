@@ -34,7 +34,7 @@ export type QueryMeta = {
   records: number;
 };
 
-/** Strips anything host- or credential-shaped out of a driver message before it */
+/** Sanitizes error messages to prevent leaking connection details or credentials. */
 export function sanitizeMessage(message: string): string {
   return message
     .replace(/\b(bolt|neo4j)(\+s|\+ssc)?:\/\/\S+/gi, '<connection uri>')
@@ -62,7 +62,7 @@ function messageOf(error: unknown): string {
   return 'The database call failed for an unrecognised reason.';
 }
 
-/** Classifies an arbitrary thrown value into one of our named failure states. */
+/** Classifies driver and network errors into user-facing failure types. */
 export function classifyError(error: unknown): Failure {
   const code = codeOf(error);
   const name = error instanceof Error ? error.name : '';

@@ -27,7 +27,8 @@ function clean(value: string | undefined): string {
 }
 
 /**
- * @throws {ConfigurationError} when a required variable is absent or still
+ * Reads and validates Neo4j connection configuration from environment variables.
+ * @throws {ConfigurationError} when required variables are missing or unset.
  */
 export function readConnectionConfig(): ConnectionConfig {
   const uri = clean(process.env.NEO4J_URI);

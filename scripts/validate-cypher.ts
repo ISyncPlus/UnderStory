@@ -1,3 +1,8 @@
+/**
+ * Cypher syntax and parameter validation.
+ * Scans all query templates using @neo4j-cypher/language-support to ensure valid syntax
+ * and prevent unparameterized variable interpolation.
+ */
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 

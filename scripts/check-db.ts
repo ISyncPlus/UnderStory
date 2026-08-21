@@ -1,3 +1,7 @@
+/**
+ * Connectivity and data verification script for CognoDB.
+ * Verifies environment config, connection handshake, and seeded graph contents.
+ */
 import neo4j from 'neo4j-driver';
 
 import { loadEnv } from './load-env';

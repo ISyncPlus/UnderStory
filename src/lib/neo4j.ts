@@ -5,7 +5,6 @@ import neo4j, { type Driver, type Record as Neo4jRecord } from 'neo4j-driver';
 import { ConfigurationError, readConnectionConfig } from './env';
 import { UNCONFIGURED, classifyError, type Outcome, type QueryMeta } from './errors';
 
-/** Driver lifecycle. */
 const DRIVER_KEY = Symbol.for('understory.neo4j.driver');
 
 type DriverHolder = { [DRIVER_KEY]?: Driver };
@@ -14,6 +13,10 @@ function driverHolder(): DriverHolder {
   return globalThis as unknown as DriverHolder;
 }
 
+/**
+ * Manages the singleton Neo4j driver instance across serverless invocations.
+ * Caches the driver on globalThis to reuse connection pools during warm starts.
+ */
 export function getDriver(): Driver {
   const holder = driverHolder();
   const existing = holder[DRIVER_KEY];
