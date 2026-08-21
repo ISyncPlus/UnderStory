@@ -47,8 +47,7 @@ demo is for.
 ### 4. Deploy
 
 Deploy, then open the URL and confirm the lamp in the top-right reads
-**Line up**. Put that URL into the README's `{{DEMO_URL}}` placeholder and into
-the submission email.
+**Line up**. Ensure that URL is linked in the README and submission email.
 
 ---
 
@@ -101,5 +100,5 @@ cannot speak Bolt.
 - [ ] "Show the queries" expands and displays real Cypher with timings
 - [ ] The trace page returns routes for `Ledger API → lodash`
 - [ ] It is readable on a phone
-- [ ] `{{DEMO_URL}}` in the README is filled in
+- [ ] The live demo URL in the README is filled in
 - [ ] The CognoDB instance is left **running**

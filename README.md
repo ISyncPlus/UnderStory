@@ -493,7 +493,7 @@ whole application in thirty seconds.
   (4.5:1 body, 3:1 controls) rather than eyeballed.
 - Filter state lives in the URL, so any view can be sent to somebody else.
 - The interface was scanned with a design anti-pattern detector at every
-  viewport; see [DESIGN.md](DESIGN.md) for what the visual system is and why.
+  viewport; see [docs/DESIGN.md](docs/DESIGN.md) for what the visual system is and why.
 
 ---
 
@@ -502,8 +502,8 @@ whole application in thirty seconds.
 - **[docs/SETUP-COGNODB.md](docs/SETUP-COGNODB.md)** — create the instance and load the graph, step by step
 - **[docs/QUERIES.md](docs/QUERIES.md)** — every query, what it answers, and why the graph earns it
 - **[docs/DEPLOY.md](docs/DEPLOY.md)** — deploy the hosted demo on Vercel
-- **[DESIGN.md](DESIGN.md)** — the visual system, recorded from the built interface
-- **[PRODUCT.md](PRODUCT.md)** — product truth: who this is for and what it must never fake
+- **[docs/DESIGN.md](docs/DESIGN.md)** — the visual system, recorded from the built interface
+- **[docs/PRODUCT.md](docs/PRODUCT.md)** — product truth: who this is for and what it must never fake
 
 ---
 
