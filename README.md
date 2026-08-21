@@ -501,7 +501,6 @@ whole application in thirty seconds.
 
 - **[docs/SETUP-COGNODB.md](docs/SETUP-COGNODB.md)** — create the instance and load the graph, step by step
 - **[docs/QUERIES.md](docs/QUERIES.md)** — every query, what it answers, and why the graph earns it
-- **[docs/DEPLOY.md](docs/DEPLOY.md)** — deploy the hosted demo on Vercel
 - **[docs/DESIGN.md](docs/DESIGN.md)** — the visual system, recorded from the built interface
 - **[docs/PRODUCT.md](docs/PRODUCT.md)** — product truth: who this is for and what it must never fake
 

@@ -4,8 +4,7 @@ Everything here is a value you copy out of the CognoDB console and paste into
 one file. It takes about five minutes, most of which is waiting for the instance
 to provision.
 
-> **Placeholders in this repo are marked `{{LIKE_THIS}}` or `REPLACE_ME`.**
-> The only two you *must* fill in to run the application are `NEO4J_URI` and
+> The only two connection variables required to run the application are `NEO4J_URI` and
 > `NEO4J_PASSWORD`.
 
 ---
@@ -179,11 +178,3 @@ NEO4J_PASSWORD=understory-local
 Everything else is identical: `npm run db:seed`, then `npm run dev`. The
 application does not know or care which one it is talking to — that is the point
 of speaking Bolt and openCypher rather than a vendor SDK.
-
----
-
-## Before you submit
-
-The assignment asks you to **keep the instance running until you hear back**, so
-the reviewers can try the app against live data. Do not delete it after
-recording the demo.
