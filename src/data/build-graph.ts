@@ -25,23 +25,7 @@ import {
   type SupersededEdge,
 } from './model';
 
-/**
- * Builds the whole graph deterministically from the authored catalogue.
- *
- * Determinism is not a nicety here: the seed script, the README figures, the
- * screenshots and the demo script all have to agree, and a reviewer who runs
- * `npm run db:seed` a week later has to get the same graph we describe. The
- * only source of variation is the integer seed, and it is a constant.
- *
- * Two structural invariants hold by construction:
- *
- *  1. **Dependencies only ever point from a lower tier to a strictly higher
- *     one.** The dependency graph is therefore acyclic, which is what makes a
- *     bounded variable-length traversal safe on a 0.5 vCPU instance.
- *  2. **Dependencies never cross ecosystems.** An npm package cannot depend on
- *     a PyPI distribution, and the applications inherit the ecosystem of their
- *     runtime.
- */
+/** Builds the whole graph deterministically from the authored catalogue. */
 
 const SEED = 20_260_820;
 
@@ -75,8 +59,6 @@ function pickWeighted<T>(rng: Rng, items: readonly T[], count: number, weight: (
   pool.sort((a, b) => b.key - a.key);
   return pool.slice(0, Math.min(count, pool.length)).map((entry) => entry.item);
 }
-
-// ── Version ladders ──────────────────────────────────────────────────────────
 
 type Semver = [number, number, number];
 
@@ -120,17 +102,7 @@ function versionsBetween(low: string, high: string, want: number, rng: Rng): str
   return out;
 }
 
-/**
- * Produces an ascending list of versions for one package.
- *
- * When the package carries advisories, the versions those advisories name
- * (`introducedIn`, `fixedIn`) are guaranteed to appear, the vulnerable band
- * between them is widened to several releases, and **at most one release is
- * added above the fix**. That last constraint is the important one: it puts
- * the vulnerable range near the head of the ladder, which is what a real
- * estate looks like in the weeks after an advisory lands — the fix exists,
- * and most lockfiles have not moved yet.
- */
+/** Produces an ascending list of versions for one package. */
 function buildVersionLadder(entry: CatalogEntry, anchors: readonly string[], rng: Rng): string[] {
   const target = 4 + entry.reach + pickInt(rng, 0, 3);
 
@@ -148,8 +120,6 @@ function buildVersionLadder(entry: CatalogEntry, anchors: readonly string[], rng
   const lowest = sortedAnchors[0] as string;
   const highest = sortedAnchors[sortedAnchors.length - 1] as string;
 
-  // Widen the vulnerable band so an advisory covers a range of releases
-  // rather than a single point.
   const intermediates: string[] = [];
   for (let i = 0; i < sortedAnchors.length - 1; i += 1) {
     intermediates.push(
@@ -178,8 +148,6 @@ function buildVersionLadder(entry: CatalogEntry, anchors: readonly string[], rng
   return [...new Set([...below, ...core])].sort((a, b) => versionOrdinal(a) - versionOrdinal(b));
 }
 
-// ── Licence assignment ───────────────────────────────────────────────────────
-
 const LICENSE_WEIGHTS: ReadonlyArray<[string, number]> = [
   ['MIT', 44],
   ['Apache-2.0', 17],
@@ -205,20 +173,12 @@ function rollLicense(rng: Rng): string {
   return 'MIT';
 }
 
-/**
- * Packages that changed licence mid-life.
- *
- * This is the shape that makes licence review a traversal problem rather than
- * a lookup: the package is fine at the version you audited and not fine at the
- * version your lockfile actually resolved.
- */
+/** Packages that changed licence mid-life. */
 const RELICENSED: ReadonlyArray<{ packageKey: string; from: string; to: string; atIndex: number }> = [
   { packageKey: 'npm:sharp', from: 'Apache-2.0', to: 'LGPL-3.0', atIndex: 3 },
   { packageKey: 'npm:node-forge', from: 'BSD-3-Clause', to: 'GPL-3.0', atIndex: 4 },
   { packageKey: 'pypi:elasticsearch', from: 'Apache-2.0', to: 'AGPL-3.0', atIndex: 3 },
 ];
-
-// ── The build ────────────────────────────────────────────────────────────────
 
 export type BuildReport = {
   seed: number;
@@ -236,9 +196,9 @@ export type BuildReport = {
   };
   /** Applications reached, per advisory, by bounded traversal over the built edges. */
   advisoryReach: Array<{ id: string; severity: string; applications: number; minimumDepth: number }>;
-  /** Distribution of shortest depths across every application/version pair the traversal reaches. */
+  
   depthHistogram: Array<{ depth: number; pairs: number }>;
-  /** Sole maintainers without a second factor, ordered by how much of the estate they sit under. */
+  
   chokepoints: Array<{ handle: string; applications: number; packages: number }>;
 };
 
@@ -258,13 +218,7 @@ const DEV_ONLY = new Set([
   'pypi:nose',
 ]);
 
-/**
- * Shortest depth from every application to every reachable package version.
- *
- * Deliberately the same shape as the Cypher the application runs: breadth-first
- * from an application's direct dependencies, bounded at `MAX_TRAVERSAL_DEPTH`.
- * Having it here lets the seed reason about the graph it is about to write.
- */
+/** Shortest depth from every application to every reachable package version. */
 export const MAX_TRAVERSAL_DEPTH = 8;
 
 function computeDepths(
@@ -315,20 +269,7 @@ function computeDepths(
   return depthByVersion;
 }
 
-/**
- * Guarantees the advisories the demo is built around actually have exposure.
- *
- * Version resolution above is probabilistic, so whether a given application
- * happens to sit on a vulnerable release is a matter of chance. For the
- * handful of advisories the README, the screenshots and the demo script all
- * point at, chance is not good enough.
- *
- * This step never invents an edge. It only *retargets* an existing dependency
- * from one release of a package to an earlier release of the same package —
- * which is precisely the difference between two lockfiles of the same estate.
- * It stops the moment the stated minimum is met, so most of the graph stays
- * exactly as the distribution produced it.
- */
+/** Guarantees the advisories the demo is built around actually have exposure. */
 function ensureExposure(
   applications: readonly { slug: string }[],
   applicationDependencies: DependencyEdge[],
@@ -346,8 +287,6 @@ function ensureExposure(
     const affected = affectedVersionsByAdvisory.get(advisory.id) ?? [];
     if (affected.length === 0) continue;
     const affectedKeys = new Set(affected.map((version) => version.key));
-    // Prefer the newest vulnerable release: the most plausible thing for a
-    // lockfile written just before the fix to be sitting on.
     const preferred = [...affected].sort((a, b) => b.ordinal - a.ordinal)[0] as PackageVersion;
 
     const siblingKeys = new Set(
@@ -371,8 +310,6 @@ function ensureExposure(
       const targetApp = missing[0];
       if (!targetApp) break;
 
-      // Which nodes can this application actually see? Its own direct
-      // dependencies, plus everything beneath them.
       const visible = new Set<string>(
         applicationDependencies.filter((edge) => edge.from === targetApp).map((edge) => edge.to),
       );
@@ -402,9 +339,6 @@ function ensureExposure(
         continue;
       }
 
-      // Nothing this application can see depends on the package at all. Give
-      // it the dependency the only honest way: through a package it already
-      // uses, at the newest vulnerable release.
       const bridge = versionDependencies
         .filter((edge) => visible.has(edge.from) && edge.from !== preferred.key)
         .sort((a, b) => `${a.from}->${a.to}`.localeCompare(`${b.from}->${b.to}`))[0];
@@ -535,8 +469,6 @@ export function buildGraph(seed: number = SEED): BuiltGraph {
     const roll = rng();
     const count = tier <= 2 ? (roll < 0.15 ? 1 : pickInt(rng, 2, 5)) : roll < 0.42 ? 1 : pickInt(rng, 2, 3);
     const chosen = pickWeighted(rng, assignable, count, (m) =>
-      // A handful of prolific maintainers should own a disproportionate share,
-      // which is what the registry actually looks like.
       m.handle.charCodeAt(0) % 7 === 0 ? 3.2 : 1,
     );
     chosen.forEach((maintainer, index) => {
@@ -590,15 +522,10 @@ export function buildGraph(seed: number = SEED): BuiltGraph {
     return out;
   }
 
-  /** Resolves a target package to one of its versions, biased toward — but not pinned to — the newest. */
+  
   function resolveVersion(targetKey: string): PackageVersion {
     const ladder = versionsByPackage.get(targetKey);
     if (!ladder || ladder.length === 0) throw new Error(`No versions built for ${targetKey}`);
-    // Geometric decay back from the newest release. Most consumers are on or
-    // near the head; a long tail is not, which is the whole reason an estate
-    // has exposure at all. Modelling that as a distribution rather than a
-    // coin flip keeps the vulnerable ranges populated without hand-placing
-    // a single edge.
     let back = 0;
     while (back < ladder.length - 1 && rng() < 0.58) back += 1;
     return ladder[ladder.length - 1 - back] as PackageVersion;
@@ -635,11 +562,6 @@ export function buildGraph(seed: number = SEED): BuiltGraph {
 
     for (const version of versionsByPackage.get(pkg.key) ?? []) {
       const count = pickInt(rng, minDeps, maxDeps);
-      // Registries stratify: a framework mostly depends on the layer directly
-      // beneath it and only occasionally reaches further down. Weighting by
-      // tier proximity as well as reach is what gives the graph real depth —
-      // without it every leaf is two hops from every application and the
-      // multi-hop queries have nothing to traverse.
       const targets = pickWeighted(rng, pool, count, (candidate) => {
         const gap = candidate.tier - entry.tier;
         const proximity = gap === 1 ? 3.4 : gap === 2 ? 1.1 : 0.28;
@@ -806,14 +728,7 @@ export function buildGraph(seed: number = SEED): BuiltGraph {
   };
 }
 
-/**
- * Walks the built graph before it is ever written to the database.
- *
- * The traversal here is deliberately the same shape as the Cypher the
- * application runs, so the seed can assert that the dataset still demonstrates
- * what the README says it demonstrates. A fixture that silently stops
- * exercising the interesting queries is a slow-motion failure.
- */
+/** Walks the built graph before it is ever written to the database. */
 function verify(
   dataset: GraphDataset,
   seeds: readonly AdvisorySeed[],

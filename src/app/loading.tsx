@@ -1,11 +1,3 @@
-/**
- * The waiting state.
- *
- * A free-tier instance can be slow on a cold start, so the wait is drawn: the
- * sheet's rules and field labels are already there, and the content arrives
- * into a structure the reader has begun to read. That is cheaper to look at
- * than a spinner and it keeps the layout from jumping.
- */
 export default function Loading() {
   return (
     <main className="mx-auto max-w-[1400px] px-4 pb-4 pt-10 sm:px-6 sm:pt-14">

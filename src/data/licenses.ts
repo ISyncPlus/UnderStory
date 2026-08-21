@@ -1,12 +1,6 @@
 import type { License } from './model';
 
-/**
- * Licences, categorised by the obligation they place on a distributor.
- *
- * The categories are what make the licence question a *graph* question: an
- * MIT-licensed application that reaches a network-copyleft package through
- * four transitive hops has a problem, and the problem is the path.
- */
+/** Licences, categorised by the obligation they place on a distributor. */
 export const LICENSES: readonly License[] = [
   {
     spdxId: 'MIT',

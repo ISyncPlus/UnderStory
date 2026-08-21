@@ -79,7 +79,7 @@ function listAdvisoryRecords(severities: string[], search: string) {
   });
 }
 
-/** How many applications reach each advisory. One reverse traversal for the whole catalogue. */
+/** How many applications reach each advisory. */
 function advisoryReachCounts() {
   return read({
     name: 'Advisory reach counts',
@@ -245,22 +245,7 @@ export type BlastRadiusRow = {
   target: { key: string; name: string; version: string } | null;
 };
 
-/**
- * **The headline query.** For one advisory, the shortest dependency path from
- * every application to an affected release — including the applications that
- * have no path at all, because "not exposed" is an answer a reader needs.
- *
- * Why `shortestPath` rather than a plain variable-length match: with both
- * endpoints bound, `shortestPath` is a bidirectional breadth-first search. Its
- * cost depends on the size of the graph, not on the number of distinct routes
- * between the two nodes — and between an application and a leaf utility, the
- * number of distinct routes is combinatorial.
- *
- * A relational schema can reach the same answer with a recursive CTE, but it
- * has to reconstruct the winning path by carrying an array of visited rows
- * through every iteration and then de-duplicating by length. Here the path is
- * the return value.
- */
+/** **The headline query.** For one advisory, the shortest dependency path from */
 export function getBlastRadius(advisoryId: string): Promise<Outcome<BlastRadiusRow[]>> {
   return read({
     name: 'Blast radius',
@@ -319,24 +304,7 @@ export type CutPoint = {
   applicationCount: number;
 };
 
-/**
- * Where the runs converge.
- *
- * Take the shortest path from every exposed application, drop the application
- * itself and the flawed release at the end, and count how many of those paths
- * pass through each remaining hop. The hop that appears in the most paths is
- * the cheapest place to cut: changing it removes several exposures at once.
- *
- * `nodes(route)[1..-1]` is the whole idea in one expression — index 0 is the
- * application and the last element is the fault, so the slice is exactly the
- * intermediate hops. Doing this in SQL means materialising every path as rows
- * and self-joining to strip the endpoints; here the path is a value and the
- * slice is a slice.
- *
- * Applications whose path is a single hop have no intermediate at all: they
- * declare the flawed release directly, and the interface says so separately
- * rather than pretending there is something in between.
- */
+/** Where the runs converge. */
 export function getCutPoints(advisoryId: string, limit = 12): Promise<Outcome<CutPoint[]>> {
   return read({
     name: 'Cut points',

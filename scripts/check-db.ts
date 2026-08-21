@@ -1,12 +1,3 @@
-/**
- * Connectivity doctor.
- *
- *   npm run db:check
- *
- * Reports, in order, the four things that actually go wrong: the environment
- * is not set, the host does not answer, the credentials are refused, or the
- * graph is empty. Each answer names its own fix.
- */
 import neo4j from 'neo4j-driver';
 
 import { loadEnv } from './load-env';

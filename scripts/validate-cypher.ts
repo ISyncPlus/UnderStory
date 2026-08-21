@@ -1,21 +1,3 @@
-/**
- * Static check over every Cypher statement in the repository.
- *
- *   npm run cypher:check
- *
- * Two things are verified, and both are things a code review would otherwise
- * have to catch by eye:
- *
- * 1. **Syntax.** Each statement is parsed with `@neo4j-cypher/language-support`,
- *    the same ANTLR grammar Neo4j's own editor tooling uses. A typo fails the
- *    check instead of failing at request time in front of a reviewer.
- *
- * 2. **No interpolated values.** Every interpolation inside a Cypher template
- *    literal must name one of a small allowlist of structural constants: the
- *    traversal bounds, which Cypher does not accept as parameters, and the
- *    shared route projection. Anything else would be a value concatenated into
- *    a query, which this project does not do.
- */
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 
@@ -38,12 +20,10 @@ const ALLOWED_INTERPOLATIONS: Record<string, string> = {
   ROUTE_PROJECTION,
 };
 
-/** Guard against the scanner silently breaking and reporting a clean run over nothing. */
 const MINIMUM_SCANNED_QUERIES = 15;
 
 type Statement = { source: string; label: string; cypher: string };
 
-/** This file describes the extraction pattern in its own source; scanning it would match itself. */
 const SELF = 'validate-cypher.ts';
 
 function walk(dir: string, out: string[] = []): string[] {

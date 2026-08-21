@@ -5,14 +5,7 @@ import { useEffect, useState } from 'react';
 import { Icon } from './icon';
 import { applyThemeTransition, type Print } from '@/lib/theme-transition';
 
-/**
- * Stock or negative.
- *
- * The two prints are the drawing's own pair — pale drafting stock under office
- * light, and the blue negative that comes back from the reprographer. The
- * choice persists per browser; the inline script in the root layout applies it
- * before first paint so the page never flashes the wrong print.
- */
+/** Stock or negative. */
 export function PrintToggle() {
   const [print, setPrint] = useState<Print>('stock');
 

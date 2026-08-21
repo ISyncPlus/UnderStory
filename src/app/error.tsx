@@ -4,13 +4,7 @@ import { useEffect } from 'react';
 
 import { Icon } from '@/components/icon';
 
-/**
- * The last line of defence.
- *
- * Query failures are values, not exceptions, so this boundary should almost
- * never render — it exists for the genuinely unexpected, and it still says what
- * happened and what to do rather than showing a stack trace.
- */
+/** The last line of defence. */
 export default function ErrorBoundary({
   error,
   reset,

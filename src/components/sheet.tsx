@@ -2,14 +2,7 @@ import type { ReactNode } from 'react';
 
 import { Icon, type IconName } from './icon';
 
-/**
- * The sheet.
- *
- * Every region of every page is a drawing sheet: a ruled border, a stencilled
- * field label in the top-left, and content below. Elevation is the border — no
- * surface in this system casts a shadow, because a drawing is flat and the
- * hierarchy comes from line weight and space instead.
- */
+/** The sheet. */
 export function Sheet({
   children,
   className = '',
@@ -27,10 +20,7 @@ export function Sheet({
   return <section className={`border ${tones[tone]} ${className}`}>{children}</section>;
 }
 
-/**
- * A sheet's field header: stencilled label on the left, optional count or
- * control on the right, separated from the body by a single rule.
- */
+/** A sheet field header. */
 export function SheetHead({
   label,
   icon,
@@ -68,14 +58,7 @@ const FAULT_INK = {
   low: 'var(--color-fault-low)',
 } as const;
 
-/**
- * The fault stencil.
- *
- * Severity is carried three ways at once — a letter, a fill weight and a
- * colour — so the class survives a monochrome print, a colour-blind reader,
- * and a screenshot pasted into a ticket. The two heavier classes are filled;
- * the two lighter ones are outlined.
- */
+/** The fault stencil. */
 export function FaultMark({
   severity,
   size = 'normal',
@@ -112,7 +95,6 @@ export function FaultMark({
   );
 }
 
-/** A clear (no fault) stencil, so "nothing found" is a drawn state rather than a blank cell. */
 export function ClearMark({ label = 'Clear' }: { label?: string }) {
   return (
     <span className="inline-flex items-center gap-1.5 align-middle text-clear">
@@ -122,12 +104,7 @@ export function ClearMark({ label = 'Clear' }: { label?: string }) {
   );
 }
 
-/**
- * A measured bar.
- *
- * Used for depth profiles and reach counts. It reads as a scale rule rather
- * than a chart: ticks, a filled run, and the figure printed beside it.
- */
+/** A measured bar. */
 export function Measure({
   value,
   max,
@@ -151,12 +128,7 @@ export function Measure({
   );
 }
 
-/**
- * The empty state.
- *
- * Named, not blank. A drawing with nothing on it still says what it is and
- * what would put something there.
- */
+/** The empty state. */
 export function Nothing({
   title,
   detail,

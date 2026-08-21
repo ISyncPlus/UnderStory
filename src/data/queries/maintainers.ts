@@ -17,24 +17,7 @@ export type Chokepoint = {
   applicationCount: number;
 };
 
-/**
- * Single points of failure that no advisory will ever tell you about.
- *
- * A maintainer who is the *only* person able to publish a package, with no
- * second factor on the account, is a live risk to everything downstream of
- * that package — and nothing in a vulnerability feed describes it.
- *
- * This is the query a relational schema handles worst. In SQL you would need a
- * recursive CTE to build the transitive closure of the dependency table, a
- * `GROUP BY … HAVING COUNT(*) = 1` to isolate sole maintainers, and a join
- * between the two that fans out across every intermediate row before the
- * final `COUNT(DISTINCT)` collapses it. Here the closure *is* the traversal
- * and the sole-maintainer test is four lines.
- *
- * Two deliberate bounds keep it honest on a small instance: candidates are
- * ranked by how load-bearing their packages are and cut to `$candidateLimit`
- * *before* the traversal runs, and the traversal itself stops at six hops.
- */
+/** Single points of failure that no advisory will ever tell you about. */
 export function getChokepoints(limit = 8, candidateLimit = 40): Promise<Outcome<Chokepoint[]>> {
   return read({
     name: 'Maintainer chokepoints',

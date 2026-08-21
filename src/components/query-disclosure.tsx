@@ -19,11 +19,7 @@ const FUNCTIONS = new Set([
   'reduce', 'labels', 'type', 'keys', 'properties',
 ]);
 
-/**
- * Renders Cypher with the three distinctions that actually help a reader:
- * clauses, functions, and parameters. Anything else stays plain — a full
- * syntax theme in a disclosure panel is decoration.
- */
+/** Renders Cypher with the three distinctions that actually help a reader: */
 function highlight(cypher: string) {
   const tokens = cypher.split(/(\s+|[(),:{}\[\]|>.-])/);
   return tokens.map((token, index) => {
@@ -60,18 +56,7 @@ function highlight(cypher: string) {
   });
 }
 
-/**
- * "Show the query."
- *
- * Every panel in this application can reveal the exact statement that produced
- * it, the parameters that were bound to it, and how long the server took. It is
- * read-only: the text is a record of what ran, not an input, so there is no
- * path from this control back into the database.
- *
- * It exists because the audience includes people evaluating the engineering,
- * and because a result you cannot inspect is a result you have to take on
- * trust.
- */
+/** "Show the query." */
 export function QueryDisclosure({ queries, label = 'Show the query' }: { queries: QueryMeta[]; label?: string }) {
   const [open, setOpen] = useState(false);
   const panelId = useId();

@@ -1,16 +1,3 @@
-/**
- * A single vocabulary for everything that can go wrong between a visitor and
- * the graph, so every surface can render a *named* state instead of a stack
- * trace or a blank screen.
- *
- * Each kind maps to one designed failure state in the UI:
- *   unconfigured  → the instance has not been connected yet
- *   unreachable   → we know where it is, it will not answer
- *   unauthorized  → credentials rejected
- *   timeout       → it answered too slowly (free tier cold start)
- *   query         → the query itself was rejected (a bug on our side)
- *   unknown       → anything we failed to classify; still rendered, never raw
- */
 export type FailureKind =
   | 'unconfigured'
   | 'unreachable'
@@ -47,10 +34,7 @@ export type QueryMeta = {
   records: number;
 };
 
-/**
- * Strips anything host- or credential-shaped out of a driver message before it
- * is allowed anywhere near a response body.
- */
+/** Strips anything host- or credential-shaped out of a driver message before it */
 export function sanitizeMessage(message: string): string {
   return message
     .replace(/\b(bolt|neo4j)(\+s|\+ssc)?:\/\/\S+/gi, '<connection uri>')
@@ -78,15 +62,7 @@ function messageOf(error: unknown): string {
   return 'The database call failed for an unrecognised reason.';
 }
 
-/**
- * Classifies an arbitrary thrown value into one of our named failure states.
- *
- * The driver reports connectivity problems through `ServiceUnavailable` /
- * `SessionExpired` errors and `Neo.ClientError.Security.*` codes for auth;
- * anything socket-level surfaces as a Node `ECONNREFUSED` / `ENOTFOUND` /
- * `ETIMEDOUT` cause. We match on all three families rather than on message
- * text, which changes between driver versions.
- */
+/** Classifies an arbitrary thrown value into one of our named failure states. */
 export function classifyError(error: unknown): Failure {
   const code = codeOf(error);
   const name = error instanceof Error ? error.name : '';

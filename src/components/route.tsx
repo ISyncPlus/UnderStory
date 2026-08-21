@@ -4,22 +4,7 @@ import type { Route } from '@/data/queries/shared';
 
 import { Icon } from './icon';
 
-/**
- * The run.
- *
- * This is the component the product exists for: a dependency path drawn the
- * way a cable record draws a jumper run — down the sheet, one terminal block
- * per frame, the fault at the end of the line.
- *
- * It is vertical at every width on purpose. A horizontal chain has to wrap on
- * a phone, and a wrapped chain loses the one thing the drawing is for: you can
- * see, at a glance, how far down the run the problem sits. Vertical also
- * matches how the artefact is read in life.
- *
- * The rail draws itself in on mount and the blocks land after it, staggered by
- * depth — one authored motion moment, not an effect on every element. Under
- * `prefers-reduced-motion` the whole thing is simply present.
- */
+/** The run. */
 export function RunDiagram({
   origin,
   originHref,
@@ -48,8 +33,6 @@ export function RunDiagram({
         className="run-rail absolute left-[7px] top-3 bottom-3"
         style={{
           width: fault ? '1.5px' : '1px',
-          // The one saturated colour in the system is spent here, on the run
-          // that actually leads somewhere.
           background: fault ? 'var(--color-jumper)' : 'var(--color-rule-strong)',
         }}
       />
@@ -146,13 +129,7 @@ function Terminal({ kind }: { kind: 'origin' | 'hop' | 'fault' }) {
   );
 }
 
-/**
- * The compact form: a run collapsed to one line, for table rows.
- *
- * Long runs elide from the middle rather than the end, because the two hops
- * that carry meaning are the first (the one you can change) and the last (the
- * one that is broken).
- */
+/** The compact form: a run collapsed to one line, for table rows. */
 export function RunInline({ route, max = 4 }: { route: Route; max?: number }) {
   const hops = route.hops;
   if (hops.length === 0) return <span className="datum text-ink-3">—</span>;

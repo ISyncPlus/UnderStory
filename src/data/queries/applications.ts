@@ -28,16 +28,7 @@ export type ApplicationProfile = {
   totalReach: number;
 };
 
-/**
- * An application's profile, including how its dependencies stack up by depth.
- *
- * The depth profile is six bounded expansions from a single node rather than
- * one unbounded walk that measures path lengths. Each `count(DISTINCT …)` is a
- * set question — "how many releases are within N hops?" — so an engine with
- * pruning expansion answers it without materialising a single path, and the
- * differences between the cumulative counts give the number of packages that
- * first appear at each depth.
- */
+/** An application's profile, including how its dependencies stack up by depth. */
 export function getApplicationProfile(slug: string): Promise<Outcome<ApplicationProfile | null>> {
   return read({
     name: 'Application profile',
@@ -100,7 +91,6 @@ export type DirectDependency = {
   worstSeverity: Severity | null;
 };
 
-/** What the application actually declares, with the advisories sitting directly on those releases. */
 export function getDirectDependencies(slug: string): Promise<Outcome<DirectDependency[]>> {
   return read({
     name: 'Declared dependencies',
@@ -214,14 +204,7 @@ export type LicenceExposure = {
   nearest: { route: Route | null; packageName: string; version: string } | null;
 };
 
-/**
- * Reciprocal-licence exposure: the question a table cannot answer well.
- *
- * An application's own licence is a single field. Whether it is *compatible*
- * with what it ships is a property of everything beneath it — and the useful
- * answer is not "you have an AGPL dependency" but "here is the four-hop chain
- * that introduced it, and here is the hop you would have to change".
- */
+/** Reciprocal-licence exposure: the question a table cannot answer well. */
 export function getLicenceExposure(slug: string): Promise<Outcome<LicenceExposure[]>> {
   return read({
     name: 'Reciprocal licence exposure',

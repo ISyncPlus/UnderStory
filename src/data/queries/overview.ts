@@ -16,12 +16,7 @@ export type EstateSummary = {
   directDependencies: number;
 };
 
-/**
- * Inventory of the whole graph.
- *
- * Each `MATCH … WITH count(…)` reduces to a single row before the next label
- * scan begins, so the chain never builds a cross product.
- */
+/** Inventory of the whole graph. */
 export function getEstateSummary(): Promise<Outcome<EstateSummary>> {
   return read({
     name: 'Estate inventory',
@@ -73,14 +68,7 @@ export type ApplicationInventory = {
   reachablePackages: number;
 };
 
-/**
- * One row per application: what it declares, and how far that actually goes.
- *
- * `count(DISTINCT reached.name)` is the load-bearing part. The query never
- * needs a path — only the set of package names an application can see — and
- * writing it that way lets an engine with pruning expansion skip duplicate
- * routes entirely instead of enumerating a combinatorial number of them.
- */
+/** One row per application: what it declares, and how far that actually goes. */
 export function getApplicationInventory(): Promise<Outcome<ApplicationInventory[]>> {
   return read({
     name: 'Application inventory',
@@ -122,15 +110,7 @@ export type ApplicationAdvisoryHit = {
   severity: Severity;
 };
 
-/**
- * Which advisories each application can reach — the multi-hop core of the
- * overview, and the query the whole product is built on.
- *
- * Read it right to left: bind the ~90 affected releases first, then walk
- * *backwards* up the dependency edges to whatever applications sit above them.
- * Expanding from the small side is the difference between ninety breadth-first
- * walks and twelve fan-outs across the entire registry.
- */
+/** Reachable advisories per application. */
 export function getApplicationAdvisoryHits(): Promise<Outcome<ApplicationAdvisoryHit[]>> {
   return read({
     name: 'Advisory reach',
@@ -166,14 +146,7 @@ export type OverviewData = {
   advisoriesWithReach: number;
 };
 
-/**
- * Composes the overview from three focused queries rather than one clever one.
- *
- * Each part answers a question that can be explained on its own, and each is
- * cheap enough to keep the page fast on a burstable instance. Joining three
- * small result sets in TypeScript costs microseconds; asking the database to
- * do it in a single statement costs a query plan nobody can reason about.
- */
+/** Composes the overview from three focused queries rather than one clever one. */
 export async function getOverview(): Promise<Outcome<OverviewData> & { queries?: QueryMeta[] }> {
   const [summary, inventory, hits] = await Promise.all([
     getEstateSummary(),

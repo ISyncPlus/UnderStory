@@ -15,16 +15,7 @@ export type TraceResult = {
   }>;
 };
 
-/**
- * "Why is this here?"
- *
- * Given an application and a package anywhere beneath it, return the shortest
- * chain that explains the package's presence — one per reachable release, so a
- * reader can see that two different releases of the same package arrived by
- * two different routes. That last part is the answer to the question people
- * actually have, and it is the one a dependency *list* structurally cannot
- * give: a list knows the package is there, not how it got there.
- */
+/** "Why is this here?" */
 export function traceRoutes(slug: string, packageKey: string): Promise<Outcome<TraceResult>> {
   return read({
     name: 'Route trace',
@@ -87,14 +78,7 @@ export type AlternateRoutes = {
   routes: Route[];
 };
 
-/**
- * Every equally-short route to one release.
- *
- * `allShortestPaths` returns the full set of minimum-length paths, which is
- * how you find out that a dependency arrives through four different top-level
- * packages rather than one — and therefore that removing any single one of
- * them changes nothing.
- */
+/** Every equally-short route to one release. */
 export function getAlternateRoutes(slug: string, versionKey: string, limit = 8): Promise<Outcome<AlternateRoutes>> {
   return read({
     name: 'Alternate routes',

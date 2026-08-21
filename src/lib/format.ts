@@ -1,5 +1,3 @@
-/** Presentation helpers. Locale-independent by design: the interface prints figures the same way everywhere. */
-
 const GROUPED = new Intl.NumberFormat('en-GB');
 
 export function count(value: number): string {

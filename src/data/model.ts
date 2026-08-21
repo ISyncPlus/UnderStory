@@ -1,12 +1,3 @@
-/**
- * The domain vocabulary, shared by the seed script, the query layer and the UI.
- *
- * These types describe *plain* objects. Nothing that crosses the query
- * boundary carries a driver class instance: Node, Relationship and Path are
- * mapped to these shapes inside each query module so results can be handed
- * straight to a Server Component and, from there, to the client.
- */
-
 export const ECOSYSTEMS = ['npm', 'pypi'] as const;
 export type Ecosystem = (typeof ECOSYSTEMS)[number];
 
@@ -42,8 +33,6 @@ export const RECIPROCAL_CATEGORIES: readonly LicenseCategory[] = [
 export const TIERS = ['critical', 'high', 'standard'] as const;
 export type ApplicationTier = (typeof TIERS)[number];
 
-// ── Node shapes ──────────────────────────────────────────────────────────────
-
 export type Application = {
   slug: string;
   name: string;
@@ -70,7 +59,7 @@ export type PackageVersion = {
   /** `<ecosystem>:<name>@<version>` — the natural key. */
   key: string;
   ecosystem: Ecosystem;
-  /** Denormalised from the parent Package so a path can be rendered without a second hop. */
+  
   name: string;
   version: string;
   /** ISO date. */
@@ -99,7 +88,7 @@ export type Advisory = {
   weakness: string;
   summary: string;
   published: string;
-  /** Every advisory in this dataset is invented. Rendered wherever it could be mistaken for real. */
+  /** Every advisory in this dataset is invented. */
   synthetic: true;
 };
 
@@ -109,8 +98,6 @@ export type License = {
   category: LicenseCategory;
   note: string;
 };
-
-// ── Relationship shapes ──────────────────────────────────────────────────────
 
 export type DependencyEdge = {
   /** Application slug or PackageVersion key. */
@@ -151,8 +138,6 @@ export type SupersededEdge = {
   reason: string;
 };
 
-// ── The whole graph, as the seed script hands it to the loader ───────────────
-
 export type GraphDataset = {
   applications: Application[];
   packages: Package[];
@@ -169,8 +154,6 @@ export type GraphDataset = {
   licensing: LicenseEdge[];
   supersessions: SupersededEdge[];
 };
-
-// ── Helpers ──────────────────────────────────────────────────────────────────
 
 export function packageKey(ecosystem: Ecosystem, name: string): string {
   return `${ecosystem}:${name}`;

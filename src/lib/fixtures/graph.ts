@@ -2,21 +2,7 @@ import { buildGraph, type BuiltGraph } from '@/data/build-graph';
 import type { DependencyEdge, PackageVersion } from '@/data/model';
 import type { Route, RouteEdge, RouteNode } from '@/data/queries/shared';
 
-/**
- * An indexed, in-memory view of the seeded graph, with the same traversals the
- * Cypher performs.
- *
- * This exists for one reason: to let the interface be built, reviewed and
- * screenshotted without provisioning a database, and to let a reviewer run
- * `npm run dev:fixtures` and see the whole application before they have a
- * CognoDB instance. It is a development and verification aid — never reachable
- * from a production build, which resolves `@/lib/neo4j` to the real driver.
- *
- * The traversals below deliberately mirror the query semantics: bounded
- * breadth-first search for shortest paths, distinct reachable sets for
- * aggregates. If the two ever disagree, one of them is wrong, and that is
- * exactly the kind of disagreement this is useful for finding.
- */
+/** In-memory graph fixture. */
 export class FixtureGraph {
   readonly data: BuiltGraph;
 

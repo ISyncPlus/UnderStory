@@ -1,18 +1,6 @@
 import type { Ecosystem } from './model';
 
-/**
- * The package catalogue.
- *
- * Package names and ecosystems are real — an evaluator should recognise what
- * they are looking at. Everything the seed *asserts about* them (versions,
- * dependency edges, maintainers, advisories) is authored for this demo.
- *
- * `tier` orders the registry from application-facing (1) to leaf utility (6).
- * The graph builder only ever draws a dependency from a lower tier to a higher
- * one, which keeps the dependency graph acyclic. That is not cosmetic: it is
- * what makes bounded variable-length traversal safe to run on a 0.5 vCPU
- * instance, and it mirrors how real registries actually stratify.
- */
+/** The package catalogue. */
 export type CatalogEntry = {
   name: string;
   tier: 1 | 2 | 3 | 4 | 5 | 6;

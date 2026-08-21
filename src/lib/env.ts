@@ -1,22 +1,10 @@
-/**
- * Runtime configuration.
- *
- * Connection details live only in the environment. Nothing here is ever
- * imported from a Client Component — `readConnectionConfig()` touches
- * `process.env`, which is server-only by construction.
- *
- * We validate lazily rather than at module load so that `next build` succeeds
- * on a machine with no database configured. A build that requires production
- * secrets is a build that cannot be verified in CI.
- */
-
 export type ConnectionConfig = {
   uri: string;
   username: string;
   password: string;
   /** Empty string means "use the instance default database". */
   database: string;
-  /** Cosmetic label surfaced in the UI so a reviewer knows which instance they are on. */
+  
   instanceLabel: string;
 };
 
@@ -39,10 +27,7 @@ function clean(value: string | undefined): string {
 }
 
 /**
- * Reads and validates the connection configuration.
- *
  * @throws {ConfigurationError} when a required variable is absent or still
- * carries the placeholder from `.env.example`.
  */
 export function readConnectionConfig(): ConnectionConfig {
   const uri = clean(process.env.NEO4J_URI);
@@ -73,11 +58,7 @@ export function isConfigured(): boolean {
   }
 }
 
-/**
- * The host portion of the configured URI, safe to display.
- * Never returns credentials — the URI form CognoDB issues carries none, but a
- * hand-edited `NEO4J_URI` might, so we strip any userinfo defensively.
- */
+/** The host portion of the configured URI, safe to display. */
 export function describeTarget(): string | null {
   const uri = clean(process.env.NEO4J_URI);
   if (!uri || PLACEHOLDER.test(uri)) return null;

@@ -7,14 +7,7 @@ type Probe =
   | { state: 'up'; latencyMs: number }
   | { state: 'down'; title: string };
 
-/**
- * The line lamp.
- *
- * Reports whether the exchange is answering, and how quickly. It probes once
- * on mount rather than polling: a burstable free-tier instance does not need a
- * heartbeat every few seconds, and a status light that generates traffic is
- * part of the problem it is reporting on.
- */
+/** The line lamp. */
 export function LineLamp() {
   const [probe, setProbe] = useState<Probe>({ state: 'checking' });
 

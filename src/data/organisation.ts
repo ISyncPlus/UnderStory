@@ -1,11 +1,6 @@
 import type { Application } from './model';
 
-/**
- * Meridian Systems — the fictional organisation whose estate this graph
- * describes. Twelve applications, deliberately uneven: two of them are barely
- * maintained, one is a marketing site with a surprising amount underneath it,
- * and the payments cluster shares more than its owners would guess.
- */
+/** Meridian Systems — the fictional organisation whose estate this graph */
 export const APPLICATIONS: readonly Application[] = [
   {
     slug: 'ledger-api',
@@ -117,16 +112,7 @@ export const APPLICATIONS: readonly Application[] = [
   },
 ];
 
-/**
- * Maintainer identities.
- *
- * Handles and names are invented. The first six are the *chokepoints* the
- * dataset is built around: single maintainers, no second factor, sitting under
- * packages that a large share of the estate reaches transitively. They are
- * assigned to deep, load-bearing packages by the graph builder rather than
- * left to chance, because the point of the dataset is to make that shape
- * legible.
- */
+/** Maintainer identities. */
 export const CHOKEPOINT_MAINTAINERS: ReadonlyArray<{
   handle: string;
   name: string;

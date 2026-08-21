@@ -1,13 +1,3 @@
-/**
- * Generates docs/QUERIES.md from the query modules themselves.
- *
- *   npm run docs:queries
- *
- * The Cypher in the documentation is read out of the source rather than
- * retyped, so it cannot drift from what actually runs. The commentary below is
- * hand-written and keyed by query name; a query with no note still appears,
- * carrying the purpose string the interface shows in its own disclosure.
- */
 import { readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 

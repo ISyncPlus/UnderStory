@@ -6,19 +6,7 @@ import type { Outcome, QueryMeta } from './errors';
 import { fixtureGraph } from './fixtures/graph';
 import type { Health, ReadQuery } from './neo4j';
 
-/**
- * Fixture-backed stand-in for the Bolt driver.
- *
- * `next.config.ts` resolves `@/lib/neo4j` to this module only when
- * `UNDERSTORY_FIXTURES=1`, which `npm run dev:fixtures` and the screenshot
- * script set. A production build never sees it.
- *
- * The important detail: it fabricates *driver records*, not application data.
- * Each fixture returns rows shaped exactly like the columns the real Cypher
- * returns, and the query module's own `map` function runs over them unchanged.
- * That means the mapping layer — the part most likely to be wrong — is
- * exercised by every screenshot and every fixture run, rather than mocked out.
- */
+/** Fixture-backed stand-in for the Bolt driver. */
 
 type Fields = Record<string, unknown>;
 
@@ -712,8 +700,6 @@ export async function read<TParams extends Record<string, unknown>, TResult>(
 ): Promise<Outcome<TResult>> {
   const startedAt = Date.now();
   const rows = rowsFor(query.name, query.params);
-  // A little latency so loading states are visible when the fixtures are used
-  // to review the interface.
   await new Promise((resolve) => setTimeout(resolve, 4));
   const meta: QueryMeta = {
     name: query.name,

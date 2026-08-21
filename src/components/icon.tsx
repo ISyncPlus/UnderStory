@@ -1,13 +1,6 @@
 import type { SVGProps } from 'react';
 
-/**
- * The icon set.
- *
- * Every mark is drawn on the same 16-unit grid at the same 1.5 stroke, with
- * square caps and mitred joins — the vocabulary of a technical drawing rather
- * than a UI kit. They are authored here rather than imported so the whole set
- * stays consistent and the bundle carries only what the interface uses.
- */
+/** The icon set. */
 export type IconName =
   | 'application'
   | 'package'

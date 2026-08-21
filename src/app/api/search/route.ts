@@ -5,13 +5,7 @@ import { search } from '@/data/queries/search';
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-/**
- * Lookup endpoint.
- *
- * The term arrives as a query-string value and leaves as a bound parameter —
- * it is never spliced into Cypher. Short terms are rejected before any query
- * runs, so a stray keystroke cannot start a scan.
- */
+/** Lookup endpoint. */
 export async function GET(request: Request) {
   const term = new URL(request.url).searchParams.get('q')?.trim() ?? '';
 

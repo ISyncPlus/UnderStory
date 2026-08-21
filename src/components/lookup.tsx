@@ -42,19 +42,7 @@ function hrefFor(hit: Hit): string {
   }
 }
 
-/**
- * Directory lookup.
- *
- * Four labels share one field because a reader searching for "express" does
- * not know or care whether it is a package, an application or a maintainer —
- * they know the string. Results are grouped by label so the answer is still
- * legible when the term matches several.
- *
- * Every state the field can be in is drawn: idle, typing, searching, no match,
- * and unreachable. The last one matters most — a search box that silently
- * returns nothing when the database is down is indistinguishable from one that
- * found nothing.
- */
+/** Directory lookup. */
 export function Lookup() {
   const router = useRouter();
   const [term, setTerm] = useState('');

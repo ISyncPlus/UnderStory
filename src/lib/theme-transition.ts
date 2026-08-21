@@ -72,10 +72,6 @@ function updateTransitionStyles(origin: TransitionOrigin) {
   styleElement.textContent = generateCircleBlurCss(origin);
 }
 
-/**
- * Triggers a circle-blur view transition originating from the button element or coordinates.
- * Falls back gracefully if View Transitions API is not supported.
- */
 export function applyThemeTransition(
   updateFn: () => void,
   originElementOrCoords?: HTMLElement | TransitionOrigin | null

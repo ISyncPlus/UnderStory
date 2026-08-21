@@ -1,12 +1,3 @@
-/**
- * Captures the interface for review and for the README.
- *
- *   npm run shots            capture into .review/
- *
- * Runs against a server the caller has already started in fixture mode, so the
- * output is deterministic: the same graph, the same ordering, the same figures
- * every time.
- */
 import { mkdirSync } from 'node:fs';
 import { chromium, type Browser, type Page } from 'playwright';
 
@@ -39,8 +30,6 @@ const VIEWPORTS = [
 ];
 
 async function settle(page: Page): Promise<void> {
-  // Entrance motion is disabled for capture: an element mid-animation reads as
-  // a missing element and gets "fixed" into a regression.
   await page.addStyleTag({
     content: `*, *::before, *::after { animation: none !important; transition: none !important; }`,
   });
@@ -97,8 +86,6 @@ async function main(): Promise<void> {
     for (const shot of SHOTS) {
       await capture(browser, shot, 'stock');
     }
-    // One pair in the negative print, to prove the second theme is composed
-    // rather than mechanically inverted.
     await capture(browser, SHOTS[0] as Shot, 'negative');
     await capture(browser, SHOTS[2] as Shot, 'negative');
   } finally {

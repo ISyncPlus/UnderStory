@@ -5,13 +5,7 @@ import { LineLamp } from './line-lamp';
 import { Lookup } from './lookup';
 import { PrintToggle } from './print-toggle';
 
-/**
- * The masthead.
- *
- * A drawing's identification strip: what this record is, which sheet you are
- * on, and the state of the line. It is a single-rule band rather than a
- * floating bar, because nothing in this system floats.
- */
+/** The masthead. */
 export function Masthead() {
   return (
     <header className="no-print sticky top-0 z-40 border-b border-rule-strong bg-stock">
@@ -55,18 +49,7 @@ function Mark() {
   );
 }
 
-/**
- * The title block.
- *
- * On a real drawing this sits in the bottom-right corner and carries
- * everything a reader needs to know about the sheet's provenance: what it is,
- * what revision, at what scale, and who is responsible for it.
- *
- * Here it does the same job, and it is where this application is honest about
- * its data. The synthetic stamp lives in the title block rather than in a
- * banner because that is where a reader looks to find out whether they can
- * trust what is drawn.
- */
+/** The title block. */
 export function TitleBlock({
   sheet,
   scale,

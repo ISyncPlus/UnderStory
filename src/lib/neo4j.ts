@@ -5,19 +5,7 @@ import neo4j, { type Driver, type Record as Neo4jRecord } from 'neo4j-driver';
 import { ConfigurationError, readConnectionConfig } from './env';
 import { UNCONFIGURED, classifyError, type Outcome, type QueryMeta } from './errors';
 
-/**
- * Driver lifecycle.
- *
- * The official driver owns a connection pool and is designed to be created
- * once and shared. On a serverless host each warm instance keeps its own
- * driver; caching it on `globalThis` means a warm invocation reuses the pool
- * instead of opening a fresh TLS handshake per request, and it survives the
- * module re-evaluation that Next's dev server does on every edit.
- *
- * Nothing in the request path ever calls `driver.close()`. Closing per request
- * is the single most common way to exhaust a small instance's connection
- * budget; the free (c0) tier allows 200.
- */
+/** Driver lifecycle. */
 const DRIVER_KEY = Symbol.for('understory.neo4j.driver');
 
 type DriverHolder = { [DRIVER_KEY]?: Driver };
@@ -36,14 +24,7 @@ export function getDriver(): Driver {
     config.uri,
     neo4j.auth.basic(config.username, config.password),
     {
-      // Our largest value is a node count in the low thousands, far below
-      // 2^53. Returning plain JS numbers removes an entire class of
-      // serialisation bugs at the Server/Client Component boundary, where a
-      // driver Integer instance cannot cross.
       disableLosslessIntegers: true,
-      // Free-tier instances are burstable and can be cold. These bounds keep
-      // a slow instance from holding a request open indefinitely while still
-      // giving a cold start room to answer.
       connectionTimeout: 15_000,
       connectionAcquisitionTimeout: 20_000,
       maxTransactionRetryTime: 8_000,
@@ -57,15 +38,7 @@ export function getDriver(): Driver {
   return driver;
 }
 
-/**
- * Server-side cap on how long a single read may run.
- *
- * A bounded traversal should never approach this; it exists so that a
- * pathological query on a burstable instance fails as a named timeout state
- * instead of holding a serverless invocation open until the platform kills it.
- * Set NEO4J_QUERY_TIMEOUT_MS=0 to omit the transaction metadata entirely if a
- * server rejects it.
- */
+/** Server-side cap on how long a single read may run. */
 const QUERY_TIMEOUT_MS = (() => {
   const raw = process.env.NEO4J_QUERY_TIMEOUT_MS?.trim();
   if (raw === undefined || raw === '') return 20_000;
@@ -78,13 +51,7 @@ function databaseName(): string | undefined {
   return configured.length > 0 ? configured : undefined;
 }
 
-/**
- * A read query, with the metadata every surface needs to explain itself.
- *
- * `cypher` is always a module-level constant and every value travels in
- * `params`. There is no code path in this application that concatenates a
- * value into a query string.
- */
+/** A read query, with the metadata every surface needs to explain itself. */
 export type ReadQuery<TParams extends Record<string, unknown>, TResult> = {
   name: string;
   purpose: string;
@@ -140,14 +107,7 @@ export function clearCache(): void {
   getQueryCache().clear();
 }
 
-/**
- * Runs a read query and returns a discriminated outcome.
- *
- * Results are cached in memory with a 5-minute TTL to ensure instantaneous
- * navigation and reloads while eliminating redundant round-trips to the
- * remote database. Simultaneous in-flight requests for the same query are
- * deduplicated automatically.
- */
+/** Runs a read query and returns a discriminated outcome. */
 export async function read<TParams extends Record<string, unknown>, TResult>(
   query: ReadQuery<TParams, TResult>,
 ): Promise<Outcome<TResult>> {
@@ -225,10 +185,7 @@ export type Health =
   | { status: 'ok'; latencyMs: number; address: string | null; version: string | null }
   | { status: 'down'; latencyMs: number; failure: ReturnType<typeof classifyError> };
 
-/**
- * Connectivity probe used by the header indicator, the health route, and the
- * `npm run db:check` script.
- */
+/** Connectivity probe. */
 export async function checkHealth(): Promise<Health> {
   const startedAt = Date.now();
   try {
@@ -252,9 +209,6 @@ export async function checkHealth(): Promise<Health> {
     if (error instanceof ConfigurationError) {
       return { status: 'down', latencyMs: Date.now() - startedAt, failure: UNCONFIGURED };
     }
-    // `dbms.components()` is a Neo4j-specific procedure. If the server
-    // answered but does not expose it, connectivity is still fine — we only
-    // treat a genuine connection failure as "down".
     const failure = classifyError(error);
     if (failure.kind === 'query') {
       return { status: 'ok', latencyMs: Date.now() - startedAt, address: null, version: null };

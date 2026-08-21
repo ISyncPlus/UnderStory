@@ -1,4 +1,3 @@
-/** Terminal colour helpers for the command-line scripts. Colour is dropped when stdout is not a TTY or NO_COLOR is set. */
 const ESC = String.fromCharCode(27);
 const enabled = process.stdout.isTTY === true && !process.env.NO_COLOR;
 

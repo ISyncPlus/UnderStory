@@ -1,15 +1,3 @@
-/**
- * Loads the graph into CognoDB.
- *
- *   npm run db:seed            load (or re-load) the graph
- *   npm run db:seed -- --reset delete everything first
- *   npm run db:seed -- --dry-run  build and validate the dataset, write nothing
- *
- * The load is idempotent: every statement MERGEs on a natural key, so running
- * it twice produces the same graph rather than a doubled one. It is also
- * batched, because a free (c0) instance has 256 MB of RAM and one 15,000-row
- * transaction is a bad way to meet it.
- */
 import neo4j, { type Driver, type Session } from 'neo4j-driver';
 
 import { buildGraph } from '../src/data/build-graph';

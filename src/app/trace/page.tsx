@@ -41,9 +41,6 @@ export default async function TracePage({ searchParams }: { searchParams: Search
   const term = (params.q ?? '').slice(0, 64);
   const packageKey = (params.pkg ?? '').slice(0, 128);
 
-  // The picker stays on screen after a target is chosen: switching targets is
-  // the second thing anyone does here, and hiding the list to save a query
-  // would cost a page load every time.
   const [candidates, trace] = await Promise.all([
     slug ? getTraceablePackages(slug, term, 30) : Promise.resolve(null),
     slug && packageKey ? traceRoutes(slug, packageKey) : Promise.resolve(null),

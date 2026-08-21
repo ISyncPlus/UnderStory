@@ -1,18 +1,6 @@
 import type { Severity } from './model';
 
-/**
- * Advisories.
- *
- * **Every advisory in this file is invented.** They carry a `USY-` prefix
- * precisely so that they cannot be mistaken for a real GHSA or CVE record, and
- * the interface labels them synthetic wherever a reader could take them for a
- * published vulnerability. The package names they attach to are real; the
- * claims made about those packages are not.
- *
- * They are authored, not sampled, because the dataset has a job: it has to
- * produce a legible spread of depths, severities and blast radii so that the
- * traversal queries have something worth traversing.
- */
+/** Advisories. */
 export type AdvisorySeed = {
   id: string;
   /** `<ecosystem>:<name>` of the affected package. */
@@ -27,11 +15,7 @@ export type AdvisorySeed = {
   fixedIn: string | null;
   /** The first version carrying the flaw, when known. */
   introducedIn: string | null;
-  /**
-   * Headline advisories are asserted to reach at least this many applications
-   * after the graph is built. The seed fails loudly if they do not — a demo
-   * dataset that quietly stops demonstrating anything is worse than no dataset.
-   */
+  /** Headline advisories are asserted to reach at least this many applications */
   minimumApplicationsReached?: number;
 };
 

@@ -142,14 +142,7 @@ export type PackageReach = {
   directDependentCount: number;
 };
 
-/**
- * Who reaches this package, and who pulls it in directly.
- *
- * The two halves answer different questions. "Which applications reach it"
- * needs the whole path and so uses `shortestPath` per (application, release)
- * pair. "Who depends on it directly" is a single-hop reverse expansion — the
- * question a package maintainer actually asks.
- */
+/** Who reaches this package, and who pulls it in directly. */
 export function getPackageReach(key: string): Promise<Outcome<PackageReach>> {
   return read({
     name: 'Package reach',
@@ -226,13 +219,7 @@ export type LoadBearingPackage = {
   weeklyDownloads: number;
 };
 
-/**
- * The packages the most of the estate sits on top of.
- *
- * Note what this is *not*: a popularity ranking. Download counts describe the
- * ecosystem; this describes the estate. A package with a tenth of the
- * downloads can sit under twice as many of your applications.
- */
+/** The packages the most of the estate sits on top of. */
 export function getLoadBearingPackages(limit = 12): Promise<Outcome<LoadBearingPackage[]>> {
   return read({
     name: 'Load-bearing packages',

@@ -16,15 +16,7 @@ const PRESENTATION: Record<
   unknown: { stencil: 'Call failed', icon: 'fault', tone: 'fault' },
 };
 
-/**
- * The designed failure state.
- *
- * A database that will not answer is a normal condition on a free tier, not an
- * exception — so it gets a drawn state with a name, a cause, and the next step,
- * rather than an error boundary or a blank sheet. The recovery is specific to
- * the failure: an unconfigured instance is told to run the seed, an unreachable
- * one to check the console.
- */
+/** The designed failure state. */
 export function FailureSheet({ failure, retryHref }: { failure: Failure; retryHref?: string }) {
   const presentation = PRESENTATION[failure.kind];
   const isFault = presentation.tone === 'fault';

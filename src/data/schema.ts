@@ -1,15 +1,3 @@
-/**
- * Schema statements, run once by the seed script before any data is written.
- *
- * Uniqueness constraints double as the lookup index for every natural key the
- * application queries by, which is why there is no separate index on `key`,
- * `slug`, `handle`, `id` or `spdxId`. The remaining indexes back the search
- * and filter paths.
- *
- * Each statement is idempotent (`IF NOT EXISTS`) and executed independently so
- * that a server which rejects one — a dialect difference, a permission — does
- * not abort the whole load.
- */
 export const CONSTRAINTS: readonly string[] = [
   'CREATE CONSTRAINT application_slug IF NOT EXISTS FOR (a:Application) REQUIRE a.slug IS UNIQUE',
   'CREATE CONSTRAINT package_key IF NOT EXISTS FOR (p:Package) REQUIRE p.key IS UNIQUE',
@@ -28,13 +16,7 @@ export const INDEXES: readonly string[] = [
   'CREATE INDEX license_category IF NOT EXISTS FOR (l:License) ON (l.category)',
 ];
 
-/**
- * Write statements.
- *
- * Every one of these takes a single `$rows` parameter and unwinds it. There is
- * no string interpolation of data anywhere in the load path — the same rule the
- * read path follows.
- */
+/** Write statements. */
 export const WRITES = {
   applications: `
     UNWIND $rows AS row
@@ -86,15 +68,7 @@ export const WRITES = {
         advisory.synthetic = row.synthetic
   `,
 
-  /**
-   * Versions carry `name` and `ecosystem` denormalised from their package.
-   *
-   * That is a deliberate trade. A returned path is a list of PackageVersion
-   * nodes; without the denormalised name, rendering "which package is this
-   * hop?" would need a second query per hop. The cost is a duplicated string
-   * on 2,500 nodes; the benefit is that every path in the interface renders
-   * from a single round trip.
-   */
+  /** Versions carry `name` and `ecosystem` denormalised from their package. */
   versions: `
     UNWIND $rows AS row
     MATCH (package:Package { key: row.packageKey })
@@ -161,7 +135,6 @@ export const WRITES = {
   `,
 } as const;
 
-/** Deletes everything, in bounded batches so a small instance is never asked to hold the whole graph in one transaction. */
 export const DELETE_BATCH = `
   MATCH (node)
   WITH node LIMIT $batchSize

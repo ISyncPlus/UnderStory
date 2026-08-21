@@ -12,19 +12,7 @@ export type SearchHit = {
   detail: string;
 };
 
-/**
- * Cross-label search.
- *
- * Four `UNION` arms rather than one clever pattern, because the four labels
- * have nothing structurally in common — they are only alike in that a person
- * might type any of their names. Each arm carries its own `LIMIT` so a broad
- * term cannot let one label crowd out the others.
- *
- * `CONTAINS` on a lower-cased property is a scan rather than an index seek.
- * At this scale that is the right trade: a full-text index would be a second
- * schema object to provision and a dialect risk on a managed engine, in
- * exchange for milliseconds nobody will notice on a few thousand nodes.
- */
+/** Cross-label search. */
 export function search(term: string, perKind = 6): Promise<Outcome<SearchHit[]>> {
   const needle = term.trim().toLowerCase();
   return read({
@@ -84,8 +72,6 @@ export function search(term: string, perKind = 6): Promise<Outcome<SearchHit[]>>
         detail: asString(record.get('detail')),
       }));
 
-      // Rank prefix matches above substring matches, then by label. Doing this
-      // in TypeScript keeps the Cypher readable and costs nothing at this size.
       const rank = (hit: SearchHit): number => {
         const label = hit.label.toLowerCase();
         const id = hit.id.toLowerCase();
