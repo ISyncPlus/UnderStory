@@ -4,9 +4,9 @@
 
 A graph-database application built for the Wexa AI take-home. It models a
 software organisation's dependency graph in **CognoDB** (openCypher over Bolt)
-and answers reachability questions a table cannot answer well: *which of our
+and answers reachability questions a table cannot answer well: _which of our
 applications can reach this advisory, by what route, and what is the cheapest
-place to break the chain?*
+place to break the chain?_
 
 > **Live demo:** [under-story-pi.vercel.app](https://under-story-pi.vercel.app/)
 > **Walkthrough video:** [Streamable (3 min take)](https://streamable.com/hcy1mq)
@@ -18,7 +18,7 @@ place to break the chain?*
 
 The estate in this demo is twelve applications standing on **2,501 releases of
 251 packages**, joined by **9,618 dependency edges**. Everything worth asking
-about it is a question about *paths*, and a path is exactly what a relational
+about it is a question about _paths_, and a path is exactly what a relational
 schema cannot return.
 
 Put the same data in Postgres and the schema is easy: `applications`,
@@ -29,7 +29,7 @@ where it falls apart.
 it?"** In SQL this is a recursive CTE that walks `dependencies` outward from
 every application, carrying an array of visited ids to avoid cycling, until it
 either finds the target or exhausts a depth bound. Then, because the CTE yields
-*every* route rather than the best one, you group by application and take the
+_every_ route rather than the best one, you group by application and take the
 minimum length — and if you also want the winning route itself (which is the
 entire point) you have to have carried the whole path array through every
 iteration and de-duplicate it afterwards. In Cypher:
@@ -66,12 +66,12 @@ above are one readable statement each instead of forty lines of CTE that the
 next engineer has to reverse-engineer, and that they stay one statement as the
 estate grows from twelve applications to two hundred.
 
-| Question | Why a table struggles |
-|---|---|
-| Which applications reach an affected release, and how far away is it? | Unbounded transitive closure, then a shortest path per pair, then the path itself as a returned value |
-| Why is `lodash` in this build at all? | You need the chain, not the membership test |
-| Which sole maintainer sits under the most of the estate? | Recursive closure joined to a `HAVING COUNT(*) = 1`, then collapsed by a distinct count |
-| Which copyleft licence arrived through a fourth-level edge, and via which hop? | The answer *is* the path |
+| Question                                                                       | Why a table struggles                                                                                 |
+| ------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------- |
+| Which applications reach an affected release, and how far away is it?          | Unbounded transitive closure, then a shortest path per pair, then the path itself as a returned value |
+| Why is `lodash` in this build at all?                                          | You need the chain, not the membership test                                                           |
+| Which sole maintainer sits under the most of the estate?                       | Recursive closure joined to a `HAVING COUNT(*) = 1`, then collapsed by a distinct count               |
+| Which copyleft licence arrived through a fourth-level edge, and via which hop? | The answer _is_ the path                                                                              |
 
 The [query walkthrough](docs/QUERIES.md) has every one of them in full.
 
@@ -94,7 +94,7 @@ which single package sits on the most of those paths.
 
 **"Why is this here?"** Pick an application and any package beneath it. Four
 different releases of `lodash` arrive by four different routes, which is the
-answer a dependency *list* structurally cannot give.
+answer a dependency _list_ structurally cannot give.
 
 ![The route finder tracing four routes from one application to four releases of lodash](docs/screenshots/trace.png)
 
@@ -152,15 +152,15 @@ Six labels, seven relationship types, **2,971 nodes and 15,280 relationships**.
 
 ### The three decisions worth defending
 
-**1. Dependencies are between *versions*, not packages.** A dependency graph
+**1. Dependencies are between _versions_, not packages.** A dependency graph
 where `express → lodash` is an edge cannot answer "which release am I actually
 on?" — and that is the only question that matters when an advisory names a
 range. `Package` exists as the identity a human searches for; `PackageVersion`
 is what the graph actually traverses.
 
 **2. `PackageVersion` carries a denormalised `name` and `ecosystem`.** A returned
-path is a list of version nodes. Without the duplicated string, rendering *"which
-package is this hop?"* would need one extra query per hop. The cost is a
+path is a list of version nodes. Without the duplicated string, rendering _"which
+package is this hop?"_ would need one extra query per hop. The cost is a
 duplicated string on 2,501 nodes; the benefit is that every path in the interface
 comes back in a single round trip.
 
@@ -190,8 +190,8 @@ per question, each carrying the plain-English purpose that the interface's
 
 ### 1. Blast radius — the headline multi-hop traversal
 
-*Every application's shortest path to an affected release, including the
-applications that have none.*
+_Every application's shortest path to an affected release, including the
+applications that have none._
 
 ```cypher
 MATCH (:Advisory { id: $advisoryId })-[:AFFECTS]->(vulnerable:PackageVersion)
@@ -208,14 +208,14 @@ ORDER BY CASE WHEN size(routes) = 0 THEN 1 ELSE 0 END ASC,
          application.name ASC
 ```
 
-`OPTIONAL MATCH` keeps the unexposed applications in the result — *"not
-reached"* is an answer a reader needs, and dropping those rows would quietly
+`OPTIONAL MATCH` keeps the unexposed applications in the result — _"not
+reached"_ is an answer a reader needs, and dropping those rows would quietly
 turn "nine of twelve" into "nine". `collect()` discards nulls, so the `CASE`
 yields only real routes while the row survives.
 
 ### 2. Cut points — where the runs converge
 
-*Which intermediate hop appears on the most shortest paths.*
+_Which intermediate hop appears on the most shortest paths._
 
 ```cypher
 … shortestPath as above …
@@ -233,7 +233,7 @@ one upgrade, four exposures removed.
 
 ### 3. Maintainer chokepoints — the query a table handles worst
 
-*Sole maintainers without a second factor, ranked by downstream reach.*
+_Sole maintainers without a second factor, ranked by downstream reach._
 
 ```cypher
 MATCH (package:Package)-[:MAINTAINED_BY]->(maintainer:Maintainer)
@@ -258,15 +258,15 @@ LIMIT $limit
 ```
 
 Two bounds keep it honest on a 0.5 vCPU instance: candidates are ranked by how
-load-bearing their packages are and cut to `$candidateLimit` *before* the
+load-bearing their packages are and cut to `$candidateLimit` _before_ the
 traversal runs, and the traversal itself stops at six hops. `WITH DISTINCT`
 immediately after the expansion is what lets an engine with pruning expansion
 skip duplicate paths rather than enumerate them.
 
 ### 4. Reciprocal licence exposure — when the answer is the path
 
-*Copyleft licences reachable from one application, with the chain that
-introduced each.*
+_Copyleft licences reachable from one application, with the chain that
+introduced each._
 
 ```cypher
 MATCH (application:Application { slug: $slug })
@@ -283,7 +283,7 @@ ORDER BY CASE license.category
          packagesReached DESC
 ```
 
-An application's own licence is a single field. Whether it is *compatible* with
+An application's own licence is a single field. Whether it is _compatible_ with
 what it ships is a property of everything beneath it — and the useful answer is
 not "you have an AGPL dependency" but "here is the four-hop chain that
 introduced it".
@@ -335,19 +335,19 @@ environment lines to paste.
 
 ## Commands
 
-| Command | What it does |
-|---|---|
-| `npm run dev` | Development server against the configured database |
-| `npm run dev:fixtures` | Development server against the in-memory fixture graph |
-| `npm run build` / `npm start` | Production build and serve |
-| `npm run db:check` | Connectivity doctor: environment → host → credentials → graph contents |
-| `npm run db:seed` | Load the graph (idempotent) |
-| `npm run db:reset` | Delete everything, then load |
-| `npm run data:verify` | Build and validate the dataset without writing anything |
-| `npm run cypher:check` | Parse every Cypher statement in the repo; fail on a syntax error or an interpolated value |
-| `npm run typecheck` | `tsc --noEmit`, strict |
-| `npm run verify` | All three checks above, in order |
-| `npm run shots` | Capture the interface into `.review/` (needs a server on :3100) |
+| Command                       | What it does                                                                              |
+| ----------------------------- | ----------------------------------------------------------------------------------------- |
+| `npm run dev`                 | Development server against the configured database                                        |
+| `npm run dev:fixtures`        | Development server against the in-memory fixture graph                                    |
+| `npm run build` / `npm start` | Production build and serve                                                                |
+| `npm run db:check`            | Connectivity doctor: environment → host → credentials → graph contents                    |
+| `npm run db:seed`             | Load the graph (idempotent)                                                               |
+| `npm run db:reset`            | Delete everything, then load                                                              |
+| `npm run data:verify`         | Build and validate the dataset without writing anything                                   |
+| `npm run cypher:check`        | Parse every Cypher statement in the repo; fail on a syntax error or an interpolated value |
+| `npm run typecheck`           | `tsc --noEmit`, strict                                                                    |
+| `npm run verify`              | All three checks above, in order                                                          |
+| `npm run shots`               | Capture the interface into `.review/` (needs a server on :3100)                           |
 
 ---
 
@@ -383,7 +383,7 @@ src/
 Pages are async Server Components that call the query layer straight, with no
 intermediate HTTP hop. Only the two genuinely interactive pieces — typeahead
 search and the connection lamp — go through Route Handlers (`/api/search`,
-`/api/health`), because those *are* client-initiated.
+`/api/health`), because those _are_ client-initiated.
 
 The alternative (an HTTP API in front of every page) would add a second
 serialisation boundary, a second place for types to drift, and a network round
@@ -422,7 +422,7 @@ reaching a burstable instance.
 
 A free-tier instance is sometimes asleep, sometimes slow, sometimes not
 configured at all. Query functions return a discriminated `Outcome<T>` rather
-than throwing, so each surface renders a *named* state — `unconfigured`,
+than throwing, so each surface renders a _named_ state — `unconfigured`,
 `unreachable`, `unauthorized`, `timeout`, `query`, `unknown` — with the specific
 recovery for that cause. Nothing shows a stack trace, and nothing shows a blank
 sheet. Driver messages are sanitised before they can reach a response body, so a
@@ -457,9 +457,9 @@ and asserts that the advisories this demo is built around still reach the number
 of applications the dataset claims. A fixture that quietly stops demonstrating
 anything is worse than no fixture. Shortest-path depths across the built graph:
 
-| Depth | 1 | 2 | 3 | 4 | 5 | 6 |
-|---|---|---|---|---|---|---|
-| (application, release) pairs | 181 | 916 | 1,844 | 1,223 | 237 | 23 |
+| Depth                        | 1   | 2   | 3     | 4     | 5   | 6   |
+| ---------------------------- | --- | --- | ----- | ----- | --- | --- |
+| (application, release) pairs | 181 | 916 | 1,844 | 1,223 | 237 | 23  |
 
 ---
 
@@ -468,7 +468,7 @@ anything is worse than no fixture. Shortest-path depths across the built graph:
 `UNDERSTORY_FIXTURES=1` makes `next.config.ts` rewrite the `@/lib/neo4j`
 import to an in-memory module. Two things about it are deliberate:
 
-1. **It fabricates driver *records*, not application data.** Each fixture
+1. **It fabricates driver _records_, not application data.** Each fixture
    returns rows shaped exactly like the columns the real Cypher returns, and the
    query module's own `map` function runs over them unchanged — so the mapping
    layer, the part most likely to be wrong, is exercised by every fixture run
@@ -503,6 +503,7 @@ whole application in thirty seconds.
 - **[docs/QUERIES.md](docs/QUERIES.md)** — every query, what it answers, and why the graph earns it
 - **[docs/DEPLOY.md](docs/DEPLOY.md)** — deploy the hosted demo on Vercel
 - **[DESIGN.md](DESIGN.md)** — the visual system, recorded from the built interface
+- **[PRODUCT.md](PRODUCT.md)** — product truth: who this is for and what it must never fake
 
 ---
 
